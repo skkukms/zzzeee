@@ -11,6 +11,7 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
+
   int _pageIndex = 0;
 
   // 설문 응답 (1~3) → 5문항
@@ -39,11 +40,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void _prev() {
     if (_pageIndex > 0) {
       setState(() => _pageIndex--);
+
     }
   }
 
   @override
   Widget build(BuildContext context) {
+
     final pages = <Widget>[
       _WelcomeScreen(onStart: _next, currentIndex: _pageIndex),
       _ChronotypeSurveyScreen(
@@ -706,11 +709,13 @@ class _CircleIconButton extends StatelessWidget {
           child: Icon(
             icon,
             size: 18,
+
           ),
         ),
       ),
     );
   }
+
 }
 
 /// ─────────────────────────────────────────
@@ -780,6 +785,7 @@ class _CalendarScreen extends StatelessWidget {
               ],
             ),
           ),
+
         ),
       ],
     );
@@ -900,3 +906,4 @@ class _SimpleAppBar extends StatelessWidget {
     );
   }
 }
+
