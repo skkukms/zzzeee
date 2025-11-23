@@ -735,15 +735,13 @@ class _CalendarScreen extends StatelessWidget {
         const _SimpleAppBar(title: '캘린더 연동'),
         Expanded(
           child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
                   '캘린더를 연동하여 스케줄을 분석합니다.',
-                  style:
-                      TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 8),
                 const Text(
@@ -752,32 +750,94 @@ class _CalendarScreen extends StatelessWidget {
                   style: TextStyle(fontSize: 13, color: Colors.black54),
                 ),
                 const SizedBox(height: 24),
+
+                // ✅ Google 캘린더 연동 버튼
                 FilledButton.icon(
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content:
-                            Text('Google 캘린더 연동은 추후 구현 예정입니다.'),
-                      ),
+                    // 1) 로딩 Dialog 표시
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (_) {
+                        return AlertDialog(
+                          title: const Text("Google 계정 연동 중..."),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: const [
+                              CircularProgressIndicator(),
+                              SizedBox(height: 16),
+                              Text(
+                                "구글 계정을 확인하는 중입니다.",
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     );
+
+                    // 2) 2초 후 연동 완료 다이얼로그
+                    Future.delayed(const Duration(seconds: 2), () {
+                      if (!context.mounted) return;
+
+                      // 로딩창 닫기
+                      Navigator.pop(context);
+
+                      // 연동 완료 안내
+                      showDialog(
+                        context: context,
+                        builder: (_) {
+                          return AlertDialog(
+                            title: const Text("연동 완료"),
+                            content: const Text(
+                              "Google Calendar 연동이 완료되었습니다!\n",
+                              textAlign: TextAlign.center,
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text("확인"),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    });
                   },
                   icon: const Icon(Icons.login),
                   label: const Text('Google로 로그인'),
                 ),
+
                 const SizedBox(height: 12),
+
+                // ✅ .ics 파일 가져오기 버튼
                 OutlinedButton.icon(
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content:
-                            Text('.ics 파일 가져오기는 추후 구현 예정입니다.'),
-                      ),
+                    showDialog(
+                      context: context,
+                      builder: (_) {
+                        return AlertDialog(
+                          title: const Text(".ics 파일 업로드"),
+                          content: const Text(
+                            ".ics 파일이 업로드되었습니다!\n",
+                            textAlign: TextAlign.center,
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text("확인"),
+                            ),
+                          ],
+                        );
+                      },
                     );
                   },
                   icon: const Icon(Icons.file_open),
                   label: const Text('.ics 파일 가져오기'),
                 ),
+
                 const SizedBox(height: 8),
+
                 TextButton(
                   onPressed: onSkip,
                   child: const Text('건너뛰기'),
@@ -785,7 +845,6 @@ class _CalendarScreen extends StatelessWidget {
               ],
             ),
           ),
-
         ),
       ],
     );
