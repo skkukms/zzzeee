@@ -287,45 +287,71 @@ class _TimelineScreenState extends State<TimelineScreen> {
                     }),
                   ),
 
-                  // 일정 블록들
+                  // ====== A. 확정 스케줄 (회색) ======
                   _TimelineEventBlock(
                     startHour: 9,
                     endHour: 12,
                     title: '오전 수업',
-                    type: '일정',
-                    color: const Color(0xFFB0B5C3),
+                    type: '확정 스케줄',
+                    color: const Color(0xFFB0B5C3), // 회색
                   ),
                   _TimelineEventBlock(
                     startHour: 13,
                     endHour: 14,
                     title: '점심 시간',
-                    type: '일정',
+                    type: '확정 스케줄',
                     color: const Color(0xFFB0B5C3),
-                  ),
-                  _TimelineEventBlock(
-                    startHour: 14,
-                    endHour: 15,
-                    title: '휴식 수면',
-                    type: '일정',
-                    color: const Color(0xFF7ED3A5),
-                    showIcon: true,
-                    icon: Icons.refresh,
-                  ),
-                  _TimelineEventBlock(
-                    startHour: 15,
-                    endHour: 17,
-                    title: '집중 시간대',
-                    type: '일정',
-                    color: const Color(0xFFF6D26D),
-                    showIcon: true,
-                    icon: Icons.check_circle_outline,
                   ),
                   _TimelineEventBlock(
                     startHour: 19,
                     endHour: 21,
                     title: '저녁 수업',
-                    type: '일정',
+                    type: '확정 스케줄',
                     color: const Color(0xFFB0B5C3),
+                  ),
+
+                  // ====== B. Sleep Zone (남색) ======
+                  _TimelineEventBlock(
+                    startHour: 23,
+                    endHour: 24,
+                    title: '오늘 취침 추천 시간대',
+                    type: 'Sleep Zone',
+                    color: const Color(0xFF283593), // 남색 톤
+                    showIcon: true,
+                    icon: Icons.nightlight_round,
+                  ),
+
+                  // ====== C. Recovery Zone (녹색) ======
+                  _TimelineEventBlock(
+                    startHour: 14,
+                    endHour: 15,
+                    title: 'Recovery 낮잠/휴식',
+                    type: 'Recovery Zone',
+                    color: const Color(0xFF7ED3A5), // 기존 녹색
+                    showIcon: true,
+                    icon: Icons.refresh,
+                  ),
+
+                  // ====== D. Focus Zone (노란색) ======
+                  _TimelineEventBlock(
+                    startHour: 15,
+                    endHour: 17,
+                    title: '집중 시간대',
+                    type: 'Focus Zone',
+                    color: const Color(0xFFF6D26D), // 기존 노란색
+                    showIcon: true,
+                    icon: Icons.check_circle_outline,
+                  ),
+
+                  // ====== E. Wind-Down Zone (보라색) ======
+                  _TimelineEventBlock(
+                    startHour: 22,
+                    endHour: 23,
+                    title: '긴장 완화/정리 시간',
+                    type: 'Wind-Down Zone',
+                    color: const Color(0xFF7E57C2), // 보라색
+                    showIcon: true,
+                    icon: Icons.self_improvement,
                   ),
                 ],
               ),
@@ -357,7 +383,7 @@ class _SleepDebtCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         onTap: onTap,
         child: Container(
-          height: 140,
+          padding: const EdgeInsets.fromLTRB(16, 16, 12, 16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
             gradient: const LinearGradient(
@@ -378,68 +404,104 @@ class _SleepDebtCard extends StatelessWidget {
           ),
           child: Row(
             children: [
-              // 왼쪽: 텍스트/그래프
+              // 왼쪽: 수면 빚 + 컨디션 곡선
               Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 12, 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        '수면 빚',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      '수면 빚',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      '-2.5h',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 28,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // ✅ 오늘의 컨디션 곡선 카드 (텍스트 한 줄만 + 더 촘촘한 그래프)
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(18),
+                        gradient: const LinearGradient(
+                          colors: [
+                            Color(0xFFF5F0FF),
+                            Color(0xFFF8F3FF),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        '-2.5h',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 28,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        '오늘의 컨디션 예상',
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 12,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Expanded(
-                        child: Align(
-                          alignment: Alignment.bottomLeft,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: List.generate(10, (i) {
-                              final heights = [6, 10, 14, 18, 20, 18, 14, 10, 8, 5];
-                              return Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 2),
-                                child: Container(
-                                  width: 6,
-                                  height: heights[i].toDouble(),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.8),
-                                    borderRadius: BorderRadius.circular(3),
-                                  ),
-                                ),
-                              );
-                            }),
+                      padding:
+                          const EdgeInsets.fromLTRB(12, 10, 12, 10),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            '오늘의 컨디션 곡선',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Color(0xFF5F5B8A),
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
-                        ),
-                      )
-                    ],
-                  ),
+                          const SizedBox(height: 6),
+                          SizedBox(
+                            height: 40, // 그래프 전체 높이
+                            child: Align(
+                              alignment: Alignment.bottomCenter,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: List.generate(24, (i) {
+                                  // 가운데가 가장 높은 종 모양 곡선
+                                  const heights = <double>[
+                                    4, 6, 8, 10, 12, 14,
+                                    16, 18, 20, 22, 24, 26,
+                                    26, 24, 22, 20, 18, 16,
+                                    14, 12, 10, 8, 6, 4,
+                                  ];
+                                  return Container(
+                                    width: 5, // 더 촘촘하게 보이도록 좁게
+                                    height: heights[i],
+                                    decoration: BoxDecoration(
+                                      borderRadius:
+                                          BorderRadius.circular(999),
+                                      gradient: const LinearGradient(
+                                        begin: Alignment.bottomCenter,
+                                        end: Alignment.topCenter,
+                                        colors: [
+                                          Color(0xFF8E7CFF),
+                                          Color(0xFFB388FF),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                }),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
+
               // 오른쪽: 원형 아이콘
               Padding(
-                padding: const EdgeInsets.only(right: 16),
+                padding: const EdgeInsets.only(left: 8),
                 child: Container(
                   width: 72,
                   height: 72,
@@ -559,7 +621,7 @@ class _TimelineEventBlock extends StatelessWidget {
   final int startHour;
   final int endHour;
   final String title;
-  final String type;
+  final String type;   // <- 이걸 표시에 사용
   final Color color;
   final bool showIcon;
   final IconData? icon;
@@ -599,9 +661,10 @@ class _TimelineEventBlock extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              '일정',
-              style: TextStyle(
+            // ✅ 여기 라벨을 type으로 교체
+            Text(
+              type,
+              style: const TextStyle(
                 fontSize: 11,
                 color: Colors.white70,
               ),
